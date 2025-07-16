@@ -5,9 +5,25 @@
 </head>
 <body>
     <h1>Inventory</h1>
+
+    <h2>Establishment Stock</h2>
     <ul>
-        {% for item in inventory_items %}
-            <li>{{ item.name }}: {{ item.quantity }} {{ item.unit }}</li>
+        {% for item in establishment_stock %}
+            <li>{{ item.ingredient.name }}: {{ item.quantity }} {{ item.unit }}</li>
+        {% empty %}
+            <li>No items in establishment stock.</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Supplier Stock</h2>
+    <ul>
+        {% for item in supplier_stock %}
+            <li>
+                {{ item.ingredient.name }} from {{ item.supplier.name }}:
+                {{ item.quantity }} {{ item.unit }} at ${{ item.price }}
+            </li>
+        {% empty %}
+            <li>No items in supplier stock.</li>
         {% endfor %}
     </ul>
 </body>
