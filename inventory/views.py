@@ -1,6 +1,11 @@
 from django.shortcuts import render
-from .models import InventoryItem
+from .models import SupplierStock, EstablishmentStock
 
 def inventory_list(request):
-    inventory_items = InventoryItem.objects.all()
-    return render(request, 'inventory/inventory_list.html', {'inventory_items': inventory_items})
+    supplier_stock = SupplierStock.objects.all()
+    establishment_stock = EstablishmentStock.objects.all()
+    context = {
+        'supplier_stock': supplier_stock,
+        'establishment_stock': establishment_stock,
+    }
+    return render(request, 'inventory/inventory_list.html', context)

@@ -7,7 +7,18 @@
     <h1>Recipes</h1>
     <ul>
         {% for recipe in recipes %}
-            <li>{{ recipe.name }}</li>
+            <li>
+                <h2>{{ recipe.name }}</h2>
+                <p>{{ recipe.description }}</p>
+                <h3>Ingredients:</h3>
+                <ul>
+                    {% for recipe_ingredient in recipe.recipeingredient_set.all %}
+                        <li>{{ recipe_ingredient.quantity }} {{ recipe_ingredient.unit }} of {{ recipe_ingredient.ingredient.name }}</li>
+                    {% endfor %}
+                </ul>
+                <h3>Instructions:</h3>
+                <p>{{ recipe.instructions }}</p>
+            </li>
         {% endfor %}
     </ul>
 </body>
