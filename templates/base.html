@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}Tochinalli{% endblock %}</title>
+</head>
+<body>
+    <nav>
+        <a href="{% url 'recipes:recipe_list' %}">Recipes</a> |
+        <a href="{% url 'inventory:supplier_list' %}">Suppliers</a> |
+        <a href="{% url 'inventory:supplier_stock_list' %}">Supplier Stock</a> |
+        <a href="{% url 'inventory:establishment_stock_list' %}">Establishment Stock</a>
+    </nav>
+    <hr>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

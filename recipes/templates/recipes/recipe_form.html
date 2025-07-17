@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if form.instance.pk %}Edit Recipe{% else %}New Recipe{% endif %}{% endblock %}
+
+{% block content %}
+    <h1>{% if form.instance.pk %}Edit Recipe{% else %}New Recipe{% endif %}</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <h2>Ingredients</h2>
+        {{ ingredient_formset.management_form }}
+        {% for form in ingredient_formset %}
+            <div class="ingredient-form">
+                {{ form.as_p }}
+            </div>
+        {% endfor %}
+
+        <button type="submit">Save</button>
+    </form>
+{% endblock %}

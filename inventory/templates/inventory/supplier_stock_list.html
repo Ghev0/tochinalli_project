@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Supplier Stock{% endblock %}
+
+{% block content %}
+    <h1>Supplier Stock</h1>
+    <a href="{% url 'inventory:supplier_stock_create' %}">Add Supplier Stock</a>
+    <ul>
+        {% for item in supplier_stock %}
+            <li>
+                {{ item.ingredient.name }} from {{ item.supplier.name }}:
+                {{ item.quantity }} {{ item.unit }} at ${{ item.price }}
+                <a href="{% url 'inventory:supplier_stock_update' item.pk %}">Edit</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
