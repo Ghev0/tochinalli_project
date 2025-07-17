@@ -1,25 +1,15 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Recipes</title>
-</head>
-<body>
+{% extends 'base.html' %}
+
+{% block title %}Recipes{% endblock %}
+
+{% block content %}
     <h1>Recipes</h1>
+    <a href="{% url 'recipes:recipe_create' %}">New Recipe</a>
     <ul>
         {% for recipe in recipes %}
             <li>
-                <h2>{{ recipe.name }}</h2>
-                <p>{{ recipe.description }}</p>
-                <h3>Ingredients:</h3>
-                <ul>
-                    {% for recipe_ingredient in recipe.recipeingredient_set.all %}
-                        <li>{{ recipe_ingredient.quantity }} {{ recipe_ingredient.unit }} of {{ recipe_ingredient.ingredient.name }}</li>
-                    {% endfor %}
-                </ul>
-                <h3>Instructions:</h3>
-                <p>{{ recipe.instructions }}</p>
+                <a href="{% url 'recipes:recipe_detail' recipe.pk %}">{{ recipe.name }}</a>
             </li>
         {% endfor %}
     </ul>
-</body>
-</html>
+{% endblock %}
