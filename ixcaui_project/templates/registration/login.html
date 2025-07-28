@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .login-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+        }
+        h1 {
+            color: #0056b3;
+            margin-bottom: 20px;
+        }
+        form div {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        form input[type="text"],
+        form input[type="password"] {
+            width: calc(100% - 22px); /* Ancho completo menos padding y borde */
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        form button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745; /* Verde para el botón de iniciar sesión */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+        form button:hover {
+            background-color: #218838;
+        }
+        .errorlist {
+            color: red;
+            list-style-type: none;
+            padding: 0;
+            margin: 0 0 10px 0;
+            text-align: left;
+        }
+        .message-info {
+            background-color: #e0f7fa;
+            border: 1px solid #00bcd4;
+            color: #00796b;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .forgot-password {
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+        .forgot-password a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>Iniciar Sesión en Tochinalli</h1>
+
+        {% if form.errors %}
+            <ul class="errorlist">
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if next %}
+            {% if User.is_authenticated %}
+                <p class="message-info">Tu cuenta no tiene acceso a esta página. Para continuar, por favor, inicia sesión con una cuenta que tenga acceso.</p>
+            {% else %}
+                <p class="message-info">Por favor, inicia sesión para ver esta página.</p>
+            {% endif %}
+        {% endif %}
+
+        <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+            <div>
+                {{ form.username.label_tag }}
+                {{ form.username }}
+            </div>
+            <div>
+                {{ form.password.label_tag }}
+                {{ form.password }}
+            </div>
+            <button type="submit">Iniciar Sesión</button>
+            <input type="hidden" name="next" value="{{ next }}">
+        </form>
+
+        <div class="forgot-password">
+            <p>¿Olvidaste tu contraseña? <a href="{% url 'password_reset' %}">Restablecer aquí</a></p>
+        </div>
+    </div>
+</body>
+</html>

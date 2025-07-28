@@ -1,0 +1,128 @@
+{# tochinalli_project/ixcaui_app/templates/ixcaui_app/producto_list_create.html #}
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tochinalli - Gestión de Productos/Inventario</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        /* Estilos básicos para este ejemplo. Considera moverlos a style.css */
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; color: #333; }
+        .container { background-color: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); max-width: 1000px; margin: 20px auto; }
+        h1, h2 { color: #0056b3; margin-bottom: 20px; text-align: center; }
+        form { margin-bottom: 40px; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9; }
+        form p { margin-bottom: 15px; }
+        form label { display: block; margin-bottom: 5px; font-weight: bold; }
+        form input[type="text"], form input[type="number"], form input[type="file"], form select, form textarea {
+            width: calc(100% - 22px); padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px;
+            box-sizing: border-box; /* Para incluir padding y border en el width */
+        }
+        form input[type="checkbox"] { margin-top: 5px; }
+        form button { background-color: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+        form button:hover { background-color: #218838; }
+        .product-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .product-table th, .product-table td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        .product-table th { background-color: #0056b3; color: white; }
+        .product-table tr:nth-child(even) { background-color: #f2f2f2; }
+        .product-table tr:hover { background-color: #ddd; }
+        .product-image { max-width: 50px; max-height: 50px; border-radius: 4px; }
+        .no-products { text-align: center; color: #666; margin-top: 20px; }
+        .action-links a { margin-right: 10px; color: #007bff; text-decoration: none; }
+        .action-links a:hover { text-decoration: underline; }
+        .alert { padding: 15px; margin-bottom: 20px; border-radius: 4px; }
+        .alert-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .alert-error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Gestión de Productos/Inventario</h1>
+
+        {% if user.is_authenticated %}
+            <p>Hola, <strong>{{ user.username }}</strong>. Estás en la gestión de inventario de tu establecimiento.</p>
+
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            <h2>Añadir Nuevo Producto</h2>
+            <form method="post" enctype="multipart/form-data"> {# IMPORTANTE: enctype para subir archivos (imágenes) #}
+                {% csrf_token %}
+                {{ form.as_p }} {# Esto renderiza el formulario con cada campo en un párrafo #}
+                <button type="submit">Guardar Producto</button>
+            </form>
+
+            <h2>Productos Existentes</h2>
+            {% if productos %}
+                <table class="product-table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>SKU</th>
+                            <th>Unidad Medida</th>
+                            <th>Costo Unitario</th>
+                            <th>Precio Venta</th>
+                            <th>Stock Actual</th>
+                            <th>Stock Mínimo</th>
+                            <th>Stock Máximo</th>
+                            <th>Categoría</th>
+                            <th>Imagen</th>
+                            <th>Activo</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for producto in productos %}
+                            <tr>
+                                <td>{{ producto.nombre }}</td>
+                                <td>{{ producto.descripcion|default:"N/A" }}</td>
+                                <td>{{ producto.sku|default:"N/A" }}</td>
+                                <td>{{ producto.unidad_medida.nombre }}</td> {# Asumiendo que unidad_medida es un ForeignKey #}
+                                <td>${{ producto.costo_unitario|floatformat:2 }}</td>
+                                <td>${{ producto.precio_venta|floatformat:2 }}</td>
+                                <td>{{ producto.stock_actual }}</td>
+                                <td>{{ producto.stock_minimo }}</td>
+                                <td>{{ producto.stock_maximo }}</td>
+                                <td>{{ producto.categoria|default:"N/A" }}</td>
+                                <td>
+                                    {% if producto.imagen %}
+                                        <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" class="product-image">
+                                    {% else %}
+                                        No Image
+                                    {% endif %}
+                                </td>
+                                <td>{% if producto.is_activo %}Sí{% else %}No{% endif %}</td>
+                                <td class="action-links">
+                                    {# Aquí irán los enlaces para editar y eliminar cuando implementemos esas vistas #}
+                                    <a href="#">Editar</a> | <a href="#">Eliminar</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="no-products">No hay productos disponibles para mostrar.</p>
+            {% endif %}
+
+            <div style="margin-top: 30px; text-align: center;">
+                <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="logout-button">Cerrar Sesión</button>
+                </form>
+                <a href="{% url 'home' %}" class="login-link" style="margin-left: 20px; background-color: #6c757d;">Ir a Inicio</a>
+            </div>
+
+        {% else %} {# Si el usuario no está autenticado #}
+            <p>No has iniciado sesión.</p>
+            <a href="{% url 'login' %}" class="login-link">Iniciar Sesión</a>
+        {% endif %}
+    </div>
+</body>
+</html>

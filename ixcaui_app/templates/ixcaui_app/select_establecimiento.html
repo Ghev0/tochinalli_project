@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seleccionar Establecimiento - Tochinalli</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 500px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        p {
+            color: #666;
+            margin-bottom: 25px;
+        }
+        .current-selection {
+            background-color: #e9e9e9;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        select {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .no-establecimientos {
+            color: #ff0000;
+            font-weight: bold;
+        }
+        .logout-link {
+            margin-top: 20px;
+            display: block;
+        }
+        .logout-link a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .logout-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Seleccionar Establecimiento Activo</h1>
+
+        {# CORREGIDO: Cambiar 'User.is_authenticated' a 'user.is_authenticated' #}
+        {% if user.is_authenticated %}
+            {# CORREGIDO: Cambiar 'User.Username' a 'user.username' #}
+            <p>Hola, {{ user.username }}.</p>
+            
+            {% if current_establecimiento %}
+                <div class="current-selection">
+                    Establecimiento actual: <strong>{{ current_establecimiento.nombre }}</strong>
+                </div>
+            {% else %}
+                <p>No tienes un establecimiento seleccionado para esta sesión.</p>
+            {% endif %}
+
+            {% if establecimientos %}
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="establecimiento_id">Elige un establecimiento para trabajar:</label>
+                        <select name="establecimiento_id" id="establecimiento_id" required>
+                            <option value="">-- Selecciona --</option>
+                            {% for est in establecimientos %}
+                                <option value="{{ est.id }}" {% if current_establecimiento and est.id == current_establecimiento.id %}selected{% endif %}>
+                                    {{ est.nombre }} (Empresa: {{ est.empresa.nombre }})
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit">Seleccionar</button>
+                </form>
+            {% else %}
+                <p class="no-establecimientos">No hay establecimientos disponibles para tu cuenta o tipo de usuario.</p>
+            {% endif %}
+
+            <div class="logout-link">
+                <p>Esta es la página de selección de establecimiento.</p>
+            </div>
+
+        {% else %}
+            <p>Necesitas iniciar sesión para seleccionar un establecimiento.</p>
+        {% endif %}
+    </div>
+</body>
+</html>
